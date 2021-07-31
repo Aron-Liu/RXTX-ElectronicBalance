@@ -176,10 +176,10 @@ public class CustomRxtx implements SerialPortEventListener {
             String[] arr = s.split("[^\\d || \\.]+");
             int x = arr.length / 2;
             while (true) {
-                if (arr[x].matches("[\\f || \\r || \\t || \\n]+")) {
+                if (arr[x].matches("[\\f || \\r || \\t || \\n]+")) {    // 数据为空
                     x++;
-                } else {
-                    if (arr[x].trim().indexOf(".") == 2) {
+                } else {    // 存在数据
+                    if (arr[x].trim().indexOf(".") == 2 || arr[x].trim().indexOf(".") == 1) { // 数据反了， 需要翻转数据
                         String res = "";
                         char[] r = arr[x].trim().toCharArray();
                         for (int i = r.length - 1; i >= 0; i--) {
