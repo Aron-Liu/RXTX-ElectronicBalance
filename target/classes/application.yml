@@ -1,0 +1,11 @@
+server:
+  port: 11111
+  servlet:
+    context-path: /rxtx
+
+logging:
+  level:
+    com.hibao.rxtx:
+      trace
+
+#accessOrigin: http://localhost:8091
