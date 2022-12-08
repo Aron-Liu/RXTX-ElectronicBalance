@@ -34,11 +34,11 @@
         </dependency>
 
         <!-- rxtx串口通讯依赖 -->
-        <dependency>
-            <groupId>RXTXcomm</groupId>
-            <artifactId>RXTXcomm</artifactId>
-            <version>2.2</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>RXTXcomm</groupId>-->
+<!--            <artifactId>RXTXcomm</artifactId>-->
+<!--            <version>2.2</version>-->
+<!--        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.rxtx/rxtx -->
 <!--        <dependency>-->

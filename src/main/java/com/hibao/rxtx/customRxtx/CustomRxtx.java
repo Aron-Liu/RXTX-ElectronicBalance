@@ -1,12 +1,14 @@
 package com.hibao.rxtx.customRxtx;
 
 import com.hibao.rxtx.util.PageData;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import gnu.io.*;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -168,30 +170,11 @@ public class CustomRxtx implements SerialPortEventListener {
                 bytes[i] = tempBytes[i];
             }
 
-            String s = "";
-            char[] chars = new String(bytes).substring(1).toCharArray();
-            for (int i = chars.length - 1; i >= 0; i--) {
-                s += chars[i];
-            }
-            String[] arr = s.split("[^\\d || \\.]+");
-            int x = arr.length / 2;
-            while (true) {
-                if (arr[x].matches("[\\f || \\r || \\t || \\n]+")) {    // 数据为空
-                    x++;
-                } else {    // 存在数据
-                    if (arr[x].trim().indexOf(".") == 2 || arr[x].trim().indexOf(".") == 1) { // 数据反了， 需要翻转数据
-                        String res = "";
-                        char[] r = arr[x].trim().toCharArray();
-                        for (int i = r.length - 1; i >= 0; i--) {
-                            res += r[i];
-                        }
-                        setWeight(res);
-                    } else {
-                        setWeight(arr[x].trim());
-                    }
-                    break;
-                }
-            }
+            String res = new String(bytes).substring(1, 15);
+            System.out.println("" + res);
+
+            if (!res.contains("\u0002")) setWeight(res);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
