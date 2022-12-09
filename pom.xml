@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.hibao.rxtx</groupId>
-    <artifactId>rxtx</artifactId>
-    <version>0.0.1</version>
+    <artifactId>rxtx_zongheng</artifactId>
+    <version>1.0.0</version>
     <name>rxtx</name>
     <description>串口通讯</description>
     <properties>
