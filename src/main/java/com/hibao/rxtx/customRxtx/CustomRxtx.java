@@ -172,7 +172,8 @@ public class CustomRxtx implements SerialPortEventListener {
 
             String unHandle = new String(bytes);
             String res;
-            if (unHandle.contains("kg")) {   // 纵横天平秤
+            if (unHandle.contains("g")) {   // 纵横天平秤
+                System.out.println("天平秤-unHandle---" + unHandle);
                 if (unHandle.contains("N")) {
                     res = unHandle.trim().charAt(0)
                             + " "
@@ -184,7 +185,8 @@ public class CustomRxtx implements SerialPortEventListener {
                 System.out.println("天平秤---" + res);
             } else {   // 纵横大小秤
                 res = new String(bytes).substring(1, 16);
-                if (!res.contains("\u0002") && !res.contains("\\rB") && !res.contains("$") && !res.contains("\ufffd")) setWeight(res);
+                if (!res.contains("\u0002") && !res.contains("\\rB") && !res.contains("$") && !res.contains("\ufffd"))
+                    setWeight(res);
                 System.out.println("常规秤---" + res);
 
             }
