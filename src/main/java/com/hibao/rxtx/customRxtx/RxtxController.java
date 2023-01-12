@@ -1,15 +1,15 @@
 package com.hibao.rxtx.customRxtx;
 
+import com.hibao.rxtx.config.AbstractServerInfos;
+import com.hibao.rxtx.config.LinuxServerInfos;
+import com.hibao.rxtx.config.WindowsServerInfos;
 import com.hibao.rxtx.util.PageData;
 import com.hibao.rxtx.util.R;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +35,23 @@ public class RxtxController {
     @GetMapping("/timingGet")
     public R timingGet() {
         return R.success().data("weight", customRxtx.getWeight());
+    }
+
+    @PostMapping("getMacAddress")
+    public R getMacAddress() {
+        //操作系统类型
+        String osName = System.getProperty("os.name").toLowerCase();
+        AbstractServerInfos abstractServerInfos = null;
+
+        //根据不同操作系统类型选择不同的数据获取方法
+        if (osName.startsWith("windows")) {
+            abstractServerInfos = new WindowsServerInfos();
+        } else if (osName.startsWith("linux")) {
+            abstractServerInfos = new LinuxServerInfos();
+        }else{//其他服务器类型
+            abstractServerInfos = new LinuxServerInfos();
+        }
+        return R.success().data("macAddress",abstractServerInfos.getServerInfos().getMacAddress().get(0));
     }
 
     /**
