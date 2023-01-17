@@ -9,10 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.TooManyListenersException;
+import java.util.*;
 
 /**
  * 串口通讯
@@ -22,6 +19,9 @@ import java.util.TooManyListenersException;
  */
 @Component
 public class CustomRxtx implements SerialPortEventListener {
+
+    // 纵横 电子秤的 指令
+    private static final String[] command = new String[]{"=0", ",0", ": !", ":!!", "=1", ",1"};
 
     // 重量
     private static String weight = null;
@@ -173,7 +173,7 @@ public class CustomRxtx implements SerialPortEventListener {
             String unHandle = new String(bytes);
             String res;
             if (unHandle.contains("g")) {   // 纵横天平秤
-                System.out.println("天平秤-unHandle---" + unHandle);
+//                System.out.println("天平秤-unHandle---" + unHandle);
                 if (unHandle.contains("N")) {
                     res = unHandle.trim().charAt(0)
                             + " "
@@ -182,13 +182,12 @@ public class CustomRxtx implements SerialPortEventListener {
                     res = unHandle.trim();
                 }
                 setWeight(res);
-                System.out.println("天平秤---" + res);
+//                System.out.println("天平秤---" + res);
             } else {   // 纵横大小秤
-                res = new String(bytes).substring(1, 16);
-                if (!res.contains("\u0002") && !res.contains("\\rB") && !res.contains("$") && !res.contains("\ufffd"))
-                    setWeight(res);
-                System.out.println("常规秤---" + res);
-
+                String byteToHexadecimal = Protocal.switchByteToHexadecimal(bytes);
+                byte[] stringToHexadecimal = Protocal.switchStringToHexadecimal(byteToHexadecimal.substring(byteToHexadecimal.indexOf("02"), byteToHexadecimal.indexOf("0D") + 2));
+                setWeight(new String(stringToHexadecimal).substring(1, new String(stringToHexadecimal).length() - 1));
+//                System.out.println("常规秤---" + res);
             }
 
         } catch (IOException e) {
