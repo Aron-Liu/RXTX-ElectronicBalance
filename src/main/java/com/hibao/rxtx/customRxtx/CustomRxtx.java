@@ -1,14 +1,13 @@
 package com.hibao.rxtx.customRxtx;
 
 import com.hibao.rxtx.util.PageData;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import gnu.io.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -18,6 +17,7 @@ import java.util.*;
  * @date 2021/7/12
  */
 @Component
+@Slf4j
 public class CustomRxtx implements SerialPortEventListener {
 
     // 纵横 电子秤的 指令
@@ -172,22 +172,10 @@ public class CustomRxtx implements SerialPortEventListener {
 
             String unHandle = new String(bytes);
             String res;
-            if (unHandle.contains("g")) {   // 纵横天平秤
-//                System.out.println("天平秤-unHandle---" + unHandle);
-                if (unHandle.contains("N")) {
-                    res = unHandle.trim().charAt(0)
-                            + " "
-                            + unHandle.trim().substring(1);
-                } else {
-                    res = unHandle.trim();
-                }
+            if (unHandle.contains("kg")) {
+                res = unHandle.substring(0, 8).trim();
                 setWeight(res);
-//                System.out.println("天平秤---" + res);
-            } else {   // 纵横大小秤
-                String byteToHexadecimal = Protocal.switchByteToHexadecimal(bytes);
-                byte[] stringToHexadecimal = Protocal.switchStringToHexadecimal(byteToHexadecimal.substring(byteToHexadecimal.indexOf("02"), byteToHexadecimal.indexOf("0D") + 2));
-                setWeight(new String(stringToHexadecimal).substring(1, new String(stringToHexadecimal).length() - 1));
-//                System.out.println("常规秤---" + res);
+                log.info("称重数据 ----------->" + res);
             }
 
         } catch (IOException e) {
