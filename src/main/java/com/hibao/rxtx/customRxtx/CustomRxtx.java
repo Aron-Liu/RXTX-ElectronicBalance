@@ -8,7 +8,11 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.TooManyListenersException;
 
 /**
  * 串口通讯
@@ -24,7 +28,7 @@ public class CustomRxtx implements SerialPortEventListener {
     private static final String[] command = new String[]{"=0", ",0", ": !", ":!!", "=1", ",1"};
 
     // 重量
-    private static String weight = null;
+    private String weight = "0";
 
     //串口
     private static SerialPort serialPort = null;
@@ -160,24 +164,29 @@ public class CustomRxtx implements SerialPortEventListener {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            len = bufferStream.read(tempBytes);
-            bytes = new byte[len];
+            synchronized (CustomRxtx.class) {
+                len = bufferStream.read(tempBytes);
+                bytes = new byte[len];
 
-            for (int i = 0; i < bytes.length; i++) {
-                if (i == 100) {
-                    break;
+                for (int i = 0; i < bytes.length; i++) {
+                    if (i == 100) {
+                        break;
+                    }
+                    bytes[i] = tempBytes[i];
                 }
-                bytes[i] = tempBytes[i];
-            }
 
-            String unHandle = new String(bytes);
-            String res;
-            if (unHandle.contains("kg")) {
-                res = unHandle.substring(0, 8).trim();
-                setWeight(res);
-                log.info("称重数据 ----------->" + res);
-            }
+                String unHandle = new String(bytes, StandardCharsets.UTF_8);
+                log.debug("unHandle -----------> {}", unHandle);
+                String[] split = unHandle.split("\\s+");
 
+                for (String s : split) {
+                    log.debug("split -----------> {}", s);
+                    if (s.matches("^[0-9]+(\\.[0-9]{1,9})?$")) {
+                        log.debug("称重数据 -----------> 【{}】", s);
+                        setWeight(s);
+                    }
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -214,12 +223,12 @@ public class CustomRxtx implements SerialPortEventListener {
         return listCom;
     }
 
-    public static String getWeight() {
-        return weight;
+    public String getWeight() {
+        return this.weight;
     }
 
-    public static void setWeight(String weight) {
-        CustomRxtx.weight = weight;
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 
 }
